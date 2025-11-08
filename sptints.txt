@@ -1,0 +1,66 @@
+🗓️ Plano de Sprints (até 14 de novembro)
+🏁 Sprint 1 — Setup e Infraestrutura (2 dias)
+Objetivo: Preparar o ambiente de desenvolvimento
+- [ ] Criar repositório GitHub com estrutura de monorepo (frontend + backend)
+- [ ] Configurar Docker para backend, frontend e banco MySQL
+- [ ] Criar base do projeto FastAPI com conexão ao MySQL
+- [ ] Criar base do projeto Vue.js com Vite
+- [ ] Configurar Swagger no backend
+- [ ] Criar README inicial com instruções básicas
+
+🧱 Sprint 2 — Modelagem e Autenticação (2 dias)
+Objetivo: Criar modelos e autenticação
+- [ ] Modelos: User, Cosmetic, Purchase, Return, Bundle
+- [ ] Autenticação com JWT (cadastro, login, middleware)
+- [ ] Ao cadastrar, atribuir 10.000 v-bucks
+- [ ] Criar testes automatizados para autenticação
+- [ ] Criar endpoints: /register, /login, /me
+
+🌐 Sprint 3 — Integração com API Fortnite (2 dias)
+Objetivo: Sincronizar dados externos
+- [ ] Criar serviço para consumir /cosmetics, /cosmetics/new, /shop
+- [ ] Criar rotina de sincronização periódica (cron job ou Celery)
+- [ ] Armazenar cosméticos no banco com flags: is_new, is_on_sale
+- [ ] Criar testes para integração externa
+
+🖼️ Sprint 4 — Listagem e Filtros de Cosméticos (2 dias)
+Objetivo: Exibir e filtrar cosméticos
+- [ ] Endpoint paginado: /cosmetics
+- [ ] Filtros: nome, tipo, raridade, data, novos, à venda, em promoção
+- [ ] Detalhes do cosmético: /cosmetics/{id}
+- [ ] Marcar cosméticos com ícones: novo, à venda, adquirido
+- [ ] Criar testes para filtros e paginação
+
+💰 Sprint 5 — Compra, Devolução e Histórico (2 dias)
+Objetivo: Implementar lógica de compra e devolução
+- [ ] Endpoint: /buy/{cosmetic_id} — desconta v-bucks
+- [ ] Endpoint: /return/{cosmetic_id} — reembolsa v-bucks
+- [ ] Bundle: marcar todos como adquiridos
+- [ ] Histórico de compras e devoluções: /history
+- [ ] Criar testes para transações
+
+👥 Sprint 6 — Perfis Públicos e Visualização (1 dia)
+Objetivo: Exibir usuários e seus cosméticos
+- [ ] Página pública paginada: /users
+- [ ] Detalhes do perfil: /users/{id} — cosméticos adquiridos
+- [ ] Criar testes para visualização pública
+
+🎨 Sprint 7 — Frontend Vue.js (3 dias)
+Objetivo: Interface amigável e responsiva
+- [ ] Página inicial com listagem paginada de cosméticos
+- [ ] Filtros e busca
+- [ ] Página de detalhes do cosmético
+- [ ] Login, cadastro e perfil do usuário
+- [ ] Página de histórico e devoluções
+- [ ] Página pública de usuários
+- [ ] Ícones indicativos (novo, à venda, adquirido)
+- [ ] Integração com backend via Axios
+
+✅ Sprint 8 — Testes, Refino e Entrega (2 dias)
+Objetivo: Finalizar e documentar
+- [ ] Testes automatizados backend com pytest
+- [ ] Testes frontend com vitest ou cypress
+- [ ] Refino de UI/UX
+- [ ] Atualizar README com instruções, tecnologias e decisões
+- [ ] Verificar sincronização com API externa
+- [ ] Validar Docker local
