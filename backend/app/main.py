@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from app.routers import cosmetics, users
-from app.database import engine, Base
+from app.routers.router import router as api_router
 
-Base.metadata.create_all(bind=engine)
+app = FastAPI(
+    title="Loja de Cosméticos Fortnite",
+    description="API para autenticação e compras de cosméticos com v-bucks.",
+    version="1.0.0"
+)
 
-app = FastAPI(title="Fortnite Cosmetics API", version="1.0.0")
-
-app.include_router(cosmetics.router)
-app.include_router(users.router)
+app.include_router(api_router)
