@@ -1,8 +1,15 @@
-from sqlalchemy.orm import Mapped, mapped_column, declarative_base
-from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, declarative_base, relationship
+from sqlalchemy import ForeignKey, Table, Column
 from datetime import datetime
 
 Base = declarative_base()
+
+bundle_cosmetic = Table(
+    "bundle_cosmetic",
+    Base.metadata,
+    Column("bundle_id", ForeignKey("bundles.id"), primary_key=True),
+    Column("cosmetic_id", ForeignKey("cosmetics.id"), primary_key=True),
+)
 
 class User(Base):
     __tablename__ = "users"
@@ -17,6 +24,9 @@ class Cosmetic(Base):
     name: Mapped[str] = mapped_column()
     rarity: Mapped[str] = mapped_column()
     price: Mapped[int] = mapped_column()
+    bundles: Mapped[list["Bundle"]] = relationship(
+        "Bundle", secondary=bundle_cosmetic, back_populates="cosmetics"
+    )
 
 class Purchase(Base):
     __tablename__ = "purchases"
@@ -36,4 +46,7 @@ class Bundle(Base):
     __tablename__ = "bundles"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
-    cosmetics_ids: Mapped[list[int]] = mapped_column()
+    cosmetics: Mapped[list["Cosmetic"]] = relationship(
+        "Cosmetic", secondary=bundle_cosmetic, back_populates="bundles"
+    )
+
