@@ -1,20 +1,26 @@
 from logging.config import fileConfig
 from sqlalchemy import create_engine, pool
 from alembic import context
-import os
 from dotenv import load_dotenv
 from typing import cast
+import os
+import sys
 
-load_dotenv()
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 from app.database import Base
-from app import models
+from app.models import User, Cosmetic, Purchase, Return, Bundle
 
 target_metadata = Base.metadata
+
+print("Tabelas detectadas:", target_metadata.tables.keys())
 
 DATABASE_URL = cast(str, os.getenv("DATABASE_URL"))
 if DATABASE_URL is None:

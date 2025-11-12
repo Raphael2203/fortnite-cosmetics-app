@@ -1,8 +1,7 @@
-from sqlalchemy.orm import Mapped, mapped_column, declarative_base, relationship
-from sqlalchemy import ForeignKey, Table, Column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, Table, Column, String
 from datetime import datetime
-
-Base = declarative_base()
+from .database import Base
 
 bundle_cosmetic = Table(
     "bundle_cosmetic",
@@ -14,15 +13,15 @@ bundle_cosmetic = Table(
 class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    email: Mapped[str] = mapped_column(unique=True, index=True)
-    hashed_password: Mapped[str] = mapped_column()
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    hashed_password: Mapped[str] = mapped_column(String(255))
     vbucks: Mapped[int] = mapped_column(default=10000)
 
 class Cosmetic(Base):
     __tablename__ = "cosmetics"
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column()
-    rarity: Mapped[str] = mapped_column()
+    name: Mapped[str] = mapped_column(String(255))
+    rarity: Mapped[str] = mapped_column(String(50))
     price: Mapped[int] = mapped_column()
     bundles: Mapped[list["Bundle"]] = relationship(
         "Bundle", secondary=bundle_cosmetic, back_populates="cosmetics"
@@ -39,14 +38,13 @@ class Return(Base):
     __tablename__ = "returns"
     id: Mapped[int] = mapped_column(primary_key=True)
     purchase_id: Mapped[int] = mapped_column(ForeignKey("purchases.id"))
-    reason: Mapped[str] = mapped_column()
+    reason: Mapped[str] = mapped_column(String(255))
     timestamp: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 class Bundle(Base):
     __tablename__ = "bundles"
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column()
+    name: Mapped[str] = mapped_column(String(255))
     cosmetics: Mapped[list["Cosmetic"]] = relationship(
         "Cosmetic", secondary=bundle_cosmetic, back_populates="bundles"
     )
-

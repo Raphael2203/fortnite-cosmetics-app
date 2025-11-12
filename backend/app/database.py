@@ -11,7 +11,7 @@ if DATABASE_URL is None:
     raise ValueError("DATABASE_URL não definido nas variáveis de ambiente")
 
 engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def get_db():

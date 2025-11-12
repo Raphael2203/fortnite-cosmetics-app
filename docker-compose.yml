@@ -2,21 +2,42 @@ services:
   backend:
     build: ./backend
     ports:
-      - "8000:8000"
+      - "{APP_PORT}:8000"
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=mysql+pymysql://user:password@db:3306/fortnite
+    env_file:
+      - ./backend/.env
+
   frontend:
     build: ./frontend
     ports:
       - "5173:5173"
   db:
     image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: fortnite
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+    env_file:
+      - ./backend/.env
     ports:
       - "3308:3306"
+
+  redis:
+    image: redis:7
+    env_file:
+      - ./backend/.env
+
+  celery:
+    build: ./backend
+    command: celery -A celery_app.worker worker --loglevel=info
+    depends_on:
+      - backend
+      - redis
+    env_file:
+      - ./backend/.env
+
+  celery-beat:
+    build: ./backend
+    command: celery -A celery_app.scheduler beat --loglevel=info
+    depends_on:
+      - celery
+      - redis
+    env_file:
+      - ./backend/.env

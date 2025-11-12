@@ -17,7 +17,7 @@ Objetivo: Criar modelos e autenticação
 
 🌐 Sprint 3 — Integração com API Fortnite (2 dias)
 Objetivo: Sincronizar dados externos
-- [ ] Criar serviço para consumir /cosmetics, /cosmetics/new, /shop
+- [x] Criar serviço para consumir /cosmetics, /cosmetics/new, /shop
 - [ ] Criar rotina de sincronização periódica (cron job ou Celery)
 - [ ] Armazenar cosméticos no banco com flags: is_new, is_on_sale
 - [ ] Criar testes para integração externa
