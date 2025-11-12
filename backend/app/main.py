@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    celery_app.send_task("celery_app.tasks.sync_cosmetics_task")
+    celery_app.send_task("sync_cosmetics")
     yield
     
 app = FastAPI(

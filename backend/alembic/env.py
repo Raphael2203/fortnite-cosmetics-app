@@ -7,9 +7,10 @@ import os
 import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(BASE_DIR)
 
-load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv(os.path.join(PROJECT_DIR, '.env'))
 
 config = context.config
 if config.config_file_name is not None:

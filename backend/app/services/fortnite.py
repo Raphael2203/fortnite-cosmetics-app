@@ -34,7 +34,7 @@ def fetch_new_cosmetics_sync() -> dict:
         response.raise_for_status()
         return response.json()
     
-def fetch_shop_sync() -> Any:
+def fetch_shop_sync() -> dict:
     with httpx.Client() as client:
         response = client.get(f"{BASE_URL}/shop", headers=HEADERS)
         response.raise_for_status()

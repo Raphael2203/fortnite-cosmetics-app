@@ -4,7 +4,8 @@ from celery.schedules import crontab
 celery_app = Celery(
     "tasks",
     broker=("CELERY_BROKER_URL"),
-    backend=("CELERY_BROKER_BACKEND")
+    backend=("CELERY_BROKER_BACKEND"),
+    include=["celery_app.tasks"]
 )
 
 celery_app.conf.update(
