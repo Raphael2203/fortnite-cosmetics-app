@@ -6,8 +6,8 @@ from .database import Base
 bundle_cosmetic = Table(
     "bundle_cosmetic",
     Base.metadata,
-    Column("bundle_id", ForeignKey("bundles.id"), primary_key=True),
-    Column("cosmetic_id", ForeignKey("cosmetics.id"), primary_key=True),
+    Column("bundle_id", Integer, ForeignKey("bundles.id"), primary_key=True),
+    Column("cosmetic_id", Integer, ForeignKey("cosmetics.id"), primary_key=True),
 )
 
 class User(Base):
@@ -20,7 +20,8 @@ class User(Base):
 
 class Cosmetic(Base):
     __tablename__ = "cosmetics"
-    id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    api_id: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(255))
     rarity: Mapped[str] = mapped_column(String(50))
     price: Mapped[int] = mapped_column(Integer)
@@ -34,7 +35,7 @@ class Purchase(Base):
     __tablename__ = "purchases"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
-    cosmetic_id: Mapped[int] = mapped_column(Integer, ForeignKey("cosmetics.id"))
+    cosmetic_id: Mapped[int] = mapped_column(Integer, ForeignKey("cosmetics.id"), onupdate="CASCADE")
     timestamp: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
     user: Mapped["User"] = relationship(back_populates="purchases")

@@ -1,42 +1,46 @@
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "${APP_PORT}:8000"
-    env_file:
-      - .env
-    depends_on:
-      - db
-    
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "5173:5173"
   db:
     image: mysql:8.0
     env_file:
-      - .env
+      - ./backend/.env
     ports:
       - "3308:3306"
 
+  backend:
+    build: ./backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./backend:/app
+
   redis:
     image: redis:7
+    ports:
+      - "6379:6379"
 
   celery:
     build: ./backend
     command: celery -A celery_app.config.celery_app worker --loglevel=info
     env_file:
-      - .env
+      - ./backend/.env
     depends_on:
-      - backend
       - redis
+      - db
+    volumes:
+      - ./backend:/app
 
   celery-beat:
     build: ./backend
     command: celery -A celery_app.scheduler beat --loglevel=info
     env_file:
-      - .env
+      - ./backend/.env
     depends_on:
       - celery
       - redis
+    volumes:
+      - ./backend:/app

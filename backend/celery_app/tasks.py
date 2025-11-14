@@ -28,26 +28,26 @@ def sync_cosmetics_task():
         }
 
         for item in all_items: 
-            cosmetic_id = item.get("cosmeticId") 
-            if not cosmetic_id:
+            api_id = item.get("cosmeticId") 
+            if not api_id:
                 continue
 
-            existing = db.query(Cosmetic).filter_by(id=cosmetic_id).first()
+            existing = db.query(Cosmetic).filter_by(api_id=api_id).first()
             if existing:
                 existing.name = item.get("name", existing.name)
                 existing.rarity = item.get("rarity", {}).get("value", existing.rarity)
                 existing.price = item.get("price", existing.price)
-                existing.is_new = cosmetic_id in new_ids
-                existing.is_on_sale = cosmetic_id in sale_ids
+                existing.is_new = api_id in new_ids
+                existing.is_on_sale = api_id in sale_ids
             else:
                 new_cosmetic = Cosmetic(
-                id=cosmetic_id,
-                name=item.get("name", "Desconhecido"),
-                rarity=item.get("rarity", {}).get("value", "comum"),
-                price=item.get("price", 0),
-                is_new=cosmetic_id in new_ids,
-                is_on_sale=cosmetic_id in sale_ids
-                )
+                    api_id=api_id,
+                    name=item.get("name", "Desconhecido"),
+                    rarity=item.get("rarity", {}).get("value", "comum"),
+                    price=item.get("price", 0),
+                    is_new=api_id in new_ids,
+                    is_on_sale=api_id in sale_ids
+                    )
                 db.add(new_cosmetic)
 
     

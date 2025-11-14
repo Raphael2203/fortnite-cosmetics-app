@@ -6,7 +6,11 @@ from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    celery_app.send_task("sync_cosmetics")
+    try:
+        celery_app.send_task("sync_cosmetics")
+        print("Sincronização inicial enviada para o celery")
+    except Exception as e:
+        print(f"Erro ao enviar sncronização inicial: {e}")
     yield
     
 app = FastAPI(

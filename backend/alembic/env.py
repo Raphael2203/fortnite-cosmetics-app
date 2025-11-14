@@ -5,19 +5,18 @@ from dotenv import load_dotenv
 from typing import cast
 import os
 import sys
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_DIR = os.path.dirname(BASE_DIR)
-sys.path.append(BASE_DIR)
+BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_PATH = BASE_DIR / ".env"
 
-load_dotenv(os.path.join(PROJECT_DIR, '.env'))
+load_dotenv(ENV_PATH)
 
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 from app.database import Base
-from app.models import User, Cosmetic, Purchase, Return, Bundle
 
 target_metadata = Base.metadata
 
