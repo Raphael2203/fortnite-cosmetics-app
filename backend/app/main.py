@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers.router import router as api_router
+from .routers import router as api_router
 from celery_app.tasks import sync_cosmetics_task
 from celery_app import celery_app
 from contextlib import asynccontextmanager

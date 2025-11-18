@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Table, Column, String, Boolean, Integer
-from datetime import datetime
+from datetime import datetime, timezone
 from .database import Base
 
 bundle_cosmetic = Table(
@@ -36,7 +36,7 @@ class Purchase(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
     cosmetic_id: Mapped[int] = mapped_column(Integer, ForeignKey("cosmetics.id"), onupdate="CASCADE")
-    timestamp: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    timestamp: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
 
     user: Mapped["User"] = relationship(back_populates="purchases")
     cosmetic: Mapped["Cosmetic"] = relationship()
@@ -46,7 +46,7 @@ class Return(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     purchase_id: Mapped[int] = mapped_column(Integer, ForeignKey("purchases.id"))
     reason: Mapped[str] = mapped_column(String(255))
-    timestamp: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    timestamp: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
 
     purchase: Mapped["Purchase"] = relationship()
 

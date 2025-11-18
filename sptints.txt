@@ -20,7 +20,7 @@ Objetivo: Sincronizar dados externos
 - [x] Criar serviço para consumir /cosmetics, /cosmetics/new, /shop
 - [x] Criar rotina de sincronização periódica (cron job ou Celery)
 - [x] Armazenar cosméticos no banco com flags: is_new, is_on_sale
-- [ ] Criar testes para integração externa
+- [x] Criar testes para integração externa
 
 🖼️ Sprint 4 — Listagem e Filtros de Cosméticos (2 dias)
 Objetivo: Exibir e filtrar cosméticos
