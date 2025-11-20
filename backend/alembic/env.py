@@ -4,7 +4,6 @@ from alembic import context
 from dotenv import load_dotenv
 from typing import cast
 import os
-import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,7 +15,8 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-from app.database import Base
+from app.database.base import Base
+import app.database.models_imports
 
 target_metadata = Base.metadata
 
