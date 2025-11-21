@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from .auth.routes import router as users
+from .auth.routes import router as auth
 from .cosmetics.routes import router as cosmetics
-from .users.routes import router as auth
+from .users.routes import router as users
 from .purchases.routes import router as purchases
 
 router = APIRouter()

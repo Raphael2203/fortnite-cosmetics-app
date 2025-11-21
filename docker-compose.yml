@@ -58,17 +58,14 @@ services:
       dockerfile: Dockerfile
     image: fortnite-cosmetics-frontend:local
     working_dir: /app
-    # bind-mount source code so changes are reflected instantly
     volumes:
       - ./frontend:/app
-    # keep node_modules inside container (anonymous volume) so bind mount doesn't hide it
       - /app/node_modules
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=http://backend:8000
+      - VITE_API_URL=http://host.docker.internal:8000
       - CHOKIDAR_USEPOLLING=true
-    # run dev server (do not run npm install here; deps are installed at image build)
-    command: sh -c "npm run dev -- --host 0.0.0.0"
+  
     depends_on:
       - backend

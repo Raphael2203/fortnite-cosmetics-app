@@ -7,11 +7,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, computed } from 'vue'
 const props = defineProps({
   page: { type: Number, required: true },
   perPage: { type: Number, required: true },
   total: { type: Number, required: true }
 })
-const last = Math.max(1, Math.ceil(props.total / props.perPage))
+const last = computed(() => Math.max(1, Math.ceil(props.total / props.perPage)))
 </script>
