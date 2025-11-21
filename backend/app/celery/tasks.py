@@ -9,7 +9,7 @@ from app.services.fortnite import (
 from sqlalchemy.exc import IntegrityError
 
 @celery_app.task(name="sync_cosmetics")
-def sync_cosmetics_task():
+def sync_cosmetics():
     db = SessionLocal()
     try:
         all_data = fetch_cosmetics_sync()

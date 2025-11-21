@@ -6,7 +6,7 @@ celery_app = Celery(
     "tasks",
     broker=settings.CELERY_BROKER_URL,
     backend=settings.CELERY_RESULT_BACKEND,
-    include=["celery_app.tasks"]
+    include=["app.celery.tasks"]
 )
 
 celery_app.conf.update(
@@ -14,7 +14,7 @@ celery_app.conf.update(
     enable_utc=False,
     beat_schedule={
         "sync-every-6-hours": {
-            "task": "celery_app.tasks.sync_cosmetics",
+            "task": "sync_cosmetics",
             "schedule": crontab(minute=0, hour="*/6"),
         }
     }
