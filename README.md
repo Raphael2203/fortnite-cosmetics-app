@@ -56,7 +56,7 @@ Ajuste conforme o ambiente (local vs Docker).
    - docker-compose up --build
 3. Serviços principais:
    - Backend: http://localhost:8000 (OpenAPI: http://localhost:8000/docs)
-   - Frontend: http://localhost:5173 (ou porta configurada no docker-compose)
+   - Frontend: http://localhost:4173
 4. Parar:
    - docker-compose down
 
@@ -84,7 +84,7 @@ Frontend:
    - npm install
 3. Ajustar variável de API (por exemplo VITE_API_URL) no .env.local ou em config.
 4. Rodar em dev:
-   - npm run dev (Vite normalmente roda em http://localhost:5173)
+   - npm run dev (Vite normalmente roda em http://localhost:4173)
 
 ## Migrações e seed
 - Alembic (migrations):
@@ -95,8 +95,7 @@ Frontend:
 
 ## Testes
 - Backend (pytest):
-  - pytest tests/ -q
-- Para testes que usam banco, utilize um banco de teste (configurar DATABASE_URL_TEST) ou fixtures que mockem o DB.
+  - pytest tests/'nome_do_teste.py'
 
 ## Endpoints úteis
 - OpenAPI: GET /docs
@@ -127,5 +126,3 @@ Adicionar arquivo LICENSE no repositório. Por padrão, use MIT ou escolha a lic
 - Migrações: rode alembic upgrade head. Se houver conflitos, revisar modelos e gerar nova migration.
 - Frontend não carrega dados: verifique VITE_API_URL / FRONTEND_API_URL e CORS no backend.
 - Logs: verifique logs do container via docker-compose logs -f <service>
-
-Se precisar de documentação automática adicional (diagramas, exemplos de payload, collection do Postman/Insomnia), posso gerar um README complementar ou arquivos de exemplo.

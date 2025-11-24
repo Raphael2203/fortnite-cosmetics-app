@@ -24,14 +24,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS: permitir acessos do frontend (ajuste allow_origins em produção)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # em produção coloque a URL do frontend explicitamente
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# inclui o roteador V1 que já agrega auth, users, cosmetics e purchases
 app.include_router(api_router)

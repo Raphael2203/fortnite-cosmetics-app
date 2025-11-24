@@ -56,16 +56,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: fortnite-cosmetics-frontend:local
-    working_dir: /app
+    env_file:
+      - ./frontend/.env
+    environment:
+      VITE_API_URL: "http://localhost:8000/"
+      CHOKIDAR_USEPOLLING: "true"
     volumes:
-      - ./frontend:/app
       - /app/node_modules
     ports:
-      - "5173:5173"
-    environment:
-      - VITE_API_URL=http://host.docker.internal:8000
-      - CHOKIDAR_USEPOLLING=true
-  
+      - "4173:4173"
     depends_on:
       - backend

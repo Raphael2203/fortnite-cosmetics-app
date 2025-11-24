@@ -5,10 +5,7 @@ COPY package*.json ./
 
 RUN npm ci
 
-RUN npm install axios vue-router@4 --no-save --legacy-peer-deps
-
 COPY . .
 
-EXPOSE 5173
-
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+RUN npm run build
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"]
