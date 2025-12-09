@@ -137,9 +137,6 @@ Frontend:
 4. Incluir testes para funcionalidades novas
 5. Manter commits pequenos e claros
 
-## Licença
-Adicionar arquivo LICENSE no repositório. Por padrão, use MIT ou escolha a licença desejada.
-
 ## Troubleshooting
 - Erro de conexão com MySQL: verifique DATABASE_URL, usuário/senha, e se o container do DB está pronto.
 - Migrações: rode alembic upgrade head. Se houver conflitos, revisar modelos e gerar nova migration.
