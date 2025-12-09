@@ -34,17 +34,36 @@ Este repositório contém uma API REST (FastAPI) que fornece dados sobre cosmeti
 - scripts/ — scripts utilitários (seed, sync de cosmetics)
 
 ## Variáveis de ambiente
-Crie um arquivo `.env` (ou copie `.env.example`) com as variáveis abaixo:
 
-- BACKEND_HOST=0.0.0.0
-- BACKEND_PORT=8000
-- DATABASE_URL=mysql+pymysql://user:password@db:3306/fortnite_db
-- DATABASE_HOST=db
-- DATABASE_USER=youruser
-- DATABASE_PASSWORD=yourpassword
-- DATABASE_NAME=fortnite_db
-- SECRET_KEY=uma_chave_secreta_para_tokens
-- FRONTEND_API_URL=http://localhost:8000/api
+Crie um arquivo `.env` no backend com as variáveis abaixo:
+
+# Banco de dados
+
+MYSQL_ROOT_PASSWORD=root
+MYSQL_DATABASE=fortnite
+MYSQL_USER=user
+MYSQL_PASSWORD=password
+DATABASE_URL=mysql+pymysql://user:password@db:3306/fortnite
+
+# Redis
+
+REDIS_URL=redis://redis:6379/0
+
+# Config celery
+
+CELERY_BROKER_URL=redis://redis:6379/0
+CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+# Outras configs
+
+APP_ENV=development
+APP_PORT=8000
+
+Crie um arquivo `.env` no frontend com as variáveis abaixo:
+
+# Api Backend
+
+VITE_API_URL="http://localhost:8000/"
 
 Ajuste conforme o ambiente (local vs Docker).
 
