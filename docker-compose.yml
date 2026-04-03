@@ -1,15 +1,4 @@
 services:
-  db:
-    image: mysql:8.0
-    env_file:
-      - ./backend/.env
-    ports:
-      - "3308:3306"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   backend:
     build: ./backend
@@ -18,8 +7,6 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      db:
-        condition: service_healthy
       redis:
         condition: service_started
     volumes:
@@ -37,7 +24,6 @@ services:
       - ./backend/.env
     depends_on:
       - redis
-      - db
     volumes:
       - ./backend:/app
 
@@ -62,6 +48,7 @@ services:
       VITE_API_URL: "http://localhost:8000/"
       CHOKIDAR_USEPOLLING: "true"
     volumes:
+      - ./frontend:/src
       - /app/node_modules
     ports:
       - "4173:4173"
