@@ -14,4 +14,4 @@ COPY . .
 ENV PYTHONPATH=/app
 
 # Comando de inicialização ajustado para produção
-CMD ["bash", "-c", "alembic upgrade head && uvicorn app.api.main:app --host 0.0.0.0 --port $PORT"]
+CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", $PORT"]
