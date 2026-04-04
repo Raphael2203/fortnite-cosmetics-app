@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from .auth.routes import router as auth
+from .users.routes import router as auth
 from .cosmetics.routes import router as cosmetics
 from .users.routes import router as users
 from .purchases.routes import router as purchases
@@ -15,7 +15,6 @@ async def trigger_sync():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao disparar tarefa: {str(e)}")
 
-router.include_router(auth, prefix="/auth", tags=["Autenticação"])
 router.include_router(cosmetics, prefix="/cosmetics", tags=["Cosméticos"])
 router.include_router(users, prefix="/users", tags=["Usuários"])
 router.include_router(purchases, prefix="/purchases", tags=["Purchases"])

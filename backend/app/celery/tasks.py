@@ -8,7 +8,7 @@ from app.services.fortnite import (
 )
 from sqlalchemy.exc import IntegrityError
 
-from backend.app.api.v1.auth.models import User
+from backend.app.api.v1.users.models import User
 
 @celery_app.task(name="sync_cosmetics")
 def sync_cosmetics():

@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from typing import List, Dict
 
-from app.api.v1.auth.models import User
+# Ajuste os caminhos de acordo com sua nova estrutura
+from app.api.v1.users.models import User 
 from app.api.v1.purchases.models import Purchase, PurchaseType
 from app.api.v1.cosmetics.models import Cosmetic
 
@@ -10,35 +11,47 @@ class UserService:
     def list_users(db: Session, page: int = 1, per_page: int = 10) -> List[Dict]:
         offset = (page - 1) * per_page
         users = db.query(User).offset(offset).limit(per_page).all()
-        result = [{"id": u.id, "email": u.email} for u in users]
-        return result
+        return [{"id": u.id, "email": u.email} for u in users]
 
     @staticmethod
     def get_user_profile(db: Session, user_id: int) -> Dict:
+        # Busca o usuário
         user = db.get(User, user_id)
         if not user:
-            raise ValueError("User not found")
+            raise ValueError("Usuário não encontrado")
 
-        # find cosmetics acquired by user (purchase.type == BUY)
+        # Busca as compras de cosméticos do usuário (Tipo BUY)
+        # Usamos join para buscar os dados do cosmético de uma vez só (mais rápido)
         purchases = (
             db.query(Purchase)
-            .filter(Purchase.user_id == user_id, Purchase.type == PurchaseType.BUY, Purchase.cosmetic_id != None)
+            .join(Cosmetic, Purchase.cosmetic_id == Cosmetic.id)
+            .filter(
+                Purchase.user_id == user_id, 
+                Purchase.type == PurchaseType.BUY,
+                Purchase.cosmetic_id.isnot(None)
+            )
             .order_by(Purchase.created_at.desc())
             .all()
         )
 
         cosmetics = []
         cosmetic_ids_seen = set()
+        
         for p in purchases:
-            if p.cosmetic_id and p.cosmetic_id not in cosmetic_ids_seen:
-                c = db.get(Cosmetic, p.cosmetic_id)
-                if c:
-                    cosmetics.append({"id": c.id, "name": c.name, "price": getattr(c, "price", None), "rarity": getattr(c, "rarity", None)})
-                    cosmetic_ids_seen.add(p.cosmetic_id)
+            # Como fizemos o join, o objeto Cosmetic já está "atachado" à compra
+            c = p.cosmetic 
+            if c and c.id not in cosmetic_ids_seen:
+                cosmetics.append({
+                    "id": c.id, 
+                    "name": c.name, 
+                    "price": getattr(c, "price", 0), 
+                    "rarity": getattr(c, "rarity", "comum")
+                })
+                cosmetic_ids_seen.add(c.id)
 
-        profile = {
+        return {
             "id": user.id,
             "email": user.email,
+            "vbucks": getattr(user, "vbucks", 0), # Adicionei vbucks para o seu front
             "acquired_cosmetics": cosmetics
         }
-        return profile

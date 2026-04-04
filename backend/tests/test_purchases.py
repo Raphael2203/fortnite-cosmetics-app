@@ -7,7 +7,7 @@ from sqlalchemy.pool import StaticPool
 from app.api.main import app
 from app.database.base import Base
 from app.database.session import get_db
-from app.api.v1.auth.dependencies import get_current_user
+from app.api.v1.users.dependencies import get_current_user
 from app.database.models_imports import *
 
 
