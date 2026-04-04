@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.api.v1.users.models import User
-from app.auth.utils import hash_password
+from app.api.v1.users.utils import hash_password
 
 def seed_test_user(db: Session):
     email_teste = "admin@admin.com"

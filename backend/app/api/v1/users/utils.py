@@ -1,6 +1,10 @@
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
+import os
 
+SECRET_KEY: str = os.getenv("SECRET_KEY", "fortnite-cosmetics-app")
+ALGORITHM: str = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 # Truncamento seguro para no máximo 72 bytes (limite do bcrypt)
 def _truncate_password(password: str, max_bytes: int = 72) -> str:
 	b = password.encode("utf-8")
