@@ -8,6 +8,8 @@ from app.services.fortnite import (
 )
 from sqlalchemy.exc import IntegrityError
 
+from backend.app.api.v1.auth.models import User
+
 @celery_app.task(name="sync_cosmetics")
 def sync_cosmetics():
     db = SessionLocal()
@@ -54,5 +56,18 @@ def sync_cosmetics():
         db.commit()
     except IntegrityError:
         db.rollback()
+    finally:
+        db.close()
+
+from datetime import datetime, timedelta
+
+@celery_app.task(name="cleanup_old_data")
+def cleanup_old_data():
+    db = SessionLocal()
+    try:
+        threshold = datetime.now() - timedelta(days=1)
+        db.query(User).filter(User.created_at < threshold).delete()
+        
+        db.commit()
     finally:
         db.close()
