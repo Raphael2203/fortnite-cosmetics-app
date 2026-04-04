@@ -68,7 +68,7 @@ def get_user_profile(user_id: int, db: Session = Depends(get_db)):
 
 @router.post("/admin/sync", tags=["Admin"])
 async def trigger_sync(x_admin_key: str = Header(None)):
-    if x_admin_key != "sua_chave_secreta_aqui":
+    if x_admin_key != "fortnite-cosmetics-app":
         raise HTTPException(status_code=403, detail="Acesso administrativo negado")
     
     celery_app.send_task("sync_cosmetics")
