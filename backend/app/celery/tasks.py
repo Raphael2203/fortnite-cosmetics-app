@@ -1,6 +1,7 @@
 from app.celery.config import celery_app
 from app.database.session import SessionLocal
 from app.api.v1.cosmetics.models import Cosmetic
+from app.api.v1.bundles.models import Bundle
 from app.services.fortnite import (
     fetch_cosmetics_sync,
     fetch_new_cosmetics_sync,
@@ -8,7 +9,7 @@ from app.services.fortnite import (
 )
 from sqlalchemy.exc import IntegrityError
 
-from backend.app.api.v1.users.models import User
+from app.api.v1.users.models import User
 
 @celery_app.task(name="sync_cosmetics")
 def sync_cosmetics():

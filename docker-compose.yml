@@ -1,12 +1,30 @@
 services:
-
+  db:
+      image: postgres:15
+      container_name: fortnite_db_local
+      restart: always
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: fortnite_db
+      ports:
+        - "5432:5432"
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
   backend:
     build: ./backend
     env_file:
-      - ./backend/.env
+      - ./backend/.env.local
     ports:
       - "8000:8000"
     depends_on:
+      db:
+        condition: service_healthy
       redis:
         condition: service_started
     volumes:
@@ -21,9 +39,12 @@ services:
     build: ./backend
     command: celery -A app.celery.config:celery_app worker --loglevel=info
     env_file:
-      - ./backend/.env
+      - ./backend/.env.local
     depends_on:
-      - redis
+      backend:
+        condition: service_started
+      redis:
+        condition: service_started
     volumes:
       - ./backend:/app
 
@@ -31,7 +52,7 @@ services:
     build: ./backend
     command: celery -A app.celery.config:celery_app beat --loglevel=info
     env_file:
-      - ./backend/.env
+      - ./backend/.env.local
     depends_on:
       - celery
       - redis
@@ -47,9 +68,12 @@ services:
     environment:
       CHOKIDAR_USEPOLLING: "true"
     volumes:
-      - ./frontend:/src
+      - ./frontend:/app
       - /app/node_modules
     ports:
       - "4173:4173"
     depends_on:
       - backend
+
+volumes:
+  postgres_data:

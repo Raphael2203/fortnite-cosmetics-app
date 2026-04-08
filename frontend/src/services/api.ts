@@ -1,5 +1,4 @@
 import axios from "axios"
-
 const BASE = (import.meta as any).env.VITE_API_URL
 
 const API = axios.create({
@@ -24,24 +23,33 @@ try {
 
 export default {
   register: (payload: { email: string; password: string }) =>
-    API.post("/auth/register/", payload),
+    API.post("/users/register", payload),
 
   login: (payload: { email: string; password: string }) =>
-    API.post("/auth/login/", payload),
+    API.post("/users/login", payload),
 
-  me: () => API.get("/auth/me/"),
+  me: () => API.get("/users/me"),
 
   setToken,
   clearToken: () => setToken(null),
 
-  listCosmetics: (params?: any) => API.get("/cosmetics/", { params }),
-  getCosmetic: (id: number) => API.get(`/cosmetics/${id}/`),
+  // Cosméticos
+  listCosmetics: (params?: any) => API.get("/cosmetics", { params }),
+  getCosmetic: (id: number) => API.get(`/cosmetics/${id}`),
 
-  buyCosmetic: (id: number) => API.post(`/purchases/buy/cosmetic/${id}/`),
-  buyBundle: (id: number) => API.post(`/purchases/buy/bundle/${id}/`),
-  returnCosmetic: (id: number) => API.post(`/purchases/return/cosmetic/${id}/`),
-  history: () => API.get("/purchases/history/"),
+  // Compras
+  buyCosmetic: (id: number) => API.post(`/purchases/buy/cosmetic/${id}`),
+  buyBundle: (id: number) => API.post(`/purchases/buy/bundle/${id}`),
+  returnCosmetic: (id: number) => API.post(`/purchases/return/cosmetic/${id}`),
+  history: () => API.get("/purchases/history"),
 
-  listUsers: (params?: any) => API.get("/users/", { params }),
-  getUser: (id: number) => API.get(`/users/${id}/`)
+  // Usuários (Geral)
+  listUsers: (params?: any) => API.get("/users", { params }),
+  getUser: (id: number) => API.get(`/users/${id}`),
+
+  // Admin Sync
+  syncCosmetics: (adminKey: string) => 
+    API.post("/users/admin/sync", {}, {
+      headers: { "x-admin-key": adminKey }
+    })
 }

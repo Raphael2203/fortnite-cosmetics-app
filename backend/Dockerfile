@@ -15,6 +15,4 @@ ENV PYTHONPATH=/app
 
 # Comando de inicialização ajustado para produção
 CMD alembic upgrade head && uvicorn app.api.main:app --host 0.0.0.0 --port $PORT
-    # celery -A app.celery.config:celery_app worker --loglevel=info & \
-    # celery -A app.celery.config:celery_app beat --loglevel=info & \
     
