@@ -1,6 +1,7 @@
 import httpx
 from app.database.session import SessionLocal
 from app.api.v1.cosmetics.models import Cosmetic
+from app.api.v1.bundles.models import Bundle
 from app.core.config import BASE_FORTNITE_URL, FORTNITE_HEADERS
 
 def fetch_fortnite_data_sync(endpoint: str):
