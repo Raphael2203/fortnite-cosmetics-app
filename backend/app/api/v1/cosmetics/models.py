@@ -15,7 +15,7 @@ class Cosmetic(Base):
     api_id: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(255))
     rarity: Mapped[str] = mapped_column(String(50))
-    price: Mapped[int] = mapped_column(Integer)
+    price: Mapped[int] = mapped_column(Integer, default=0)
     is_new: Mapped[bool] = mapped_column(Boolean, default=False)
     is_on_sale: Mapped[bool] = mapped_column(Boolean, default=False)
 
