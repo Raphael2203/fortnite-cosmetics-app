@@ -25,9 +25,9 @@ def sync_cosmetics():
         print("🚀 Buscando dados oficiais da Fortnite-API...")
         
         # 1. Busca os dados (Usando a estrutura da Documentação)
-        all_data = fetch_fortnite_data_sync("/v2/cosmetics/br")
-        new_data = fetch_fortnite_data_sync("/v2/cosmetics/new")
-        shop_data = fetch_fortnite_data_sync("/v2/shop/br")
+        all_data = fetch_fortnite_data_sync("/cosmetics/br")
+        new_data = fetch_fortnite_data_sync("/cosmetics/new")
+        shop_data = fetch_fortnite_data_sync("/shop/br")
 
         # 2. Extrai as listas com segurança
         # /v2/cosmetics/br retorna uma lista direto em 'data'
