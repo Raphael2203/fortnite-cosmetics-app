@@ -19,7 +19,7 @@ def sync_cosmetics():
         shop_data = fetch_fortnite_data_sync("/shop")
 
        
-        all_items = all_data.get("data", []).get("beans", [])
+        all_items = all_data.get("data", {}).get("beans", [])
         new_ids = {c.get("id") for c in new_data.get("data", [])}
  
         shop_ids = set()

@@ -15,4 +15,4 @@ class PurchaseOut(BaseModel):
     type: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
