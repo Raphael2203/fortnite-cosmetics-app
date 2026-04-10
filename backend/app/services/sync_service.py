@@ -27,24 +27,26 @@ def sync_cosmetics():
         # 1. Busca os dados (Usando a estrutura da Documentação)
         all_data = fetch_fortnite_data_sync("/cosmetics/br")
         new_data = fetch_fortnite_data_sync("/cosmetics/new")
-        shop_data = fetch_fortnite_data_sync("/shop/br")
+        shop_data = fetch_fortnite_data_sync("/shop/br/combined")
 
         # 2. Extrai as listas com segurança
         # /v2/cosmetics/br retorna uma lista direto em 'data'
-        all_items = all_data.get("data", []) 
+        all_items = all_data.get("data", []) if isinstance(all_data, dict) else []
         
         # /v2/cosmetics/new retorna os itens dentro de 'data' -> 'items'
-        new_items = new_data.get("data", {}).get("items", [])
-        new_ids = {item.get("id") for item in new_items if item.get("id")}
+        new_items_list = []
+        if isinstance(new_data, dict):
+            new_items_list = new_data.get("data", {}).get("items", [])
+        new_ids = {item.get("id") for item in new_items_list if isinstance(item, dict)}
         
         # /v2/shop/br organiza por 'featured' e 'daily' (simplificando para pegar todos)
         shop_ids = set()
-        shop_entries = shop_data.get("data", {}).get("featured", {}).get("entries", []) + \
-                       shop_data.get("data", {}).get("daily", {}).get("entries", [])
-        
-        for entry in shop_entries:
-            for item in entry.get("items", []):
-                shop_ids.add(item.get("id"))
+        if isinstance(shop_data, dict):
+            # Tenta buscar nas 'entries' da loja
+            shop_entries = shop_data.get("data", {}).get("entries", [])
+            for entry in shop_entries:
+                for s_item in entry.get("items", []):
+                    shop_ids.add(s_item.get("id"))
 
         print(f"📊 Processando {len(all_items)} cosméticos encontrados...")
 
