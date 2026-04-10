@@ -1,11 +1,8 @@
 from typing import List
 from fastapi import APIRouter, Depends, Query, HTTPException, Header
 from sqlalchemy.orm import Session
-
 from app.database.session import get_db
-from app.celery.config import celery_app
 from app.services.user_service import UserService
-
 from .models import User
 from .schemas import UserCreate, UserLogin, Token, UserOut
 from .dependencies import get_current_user
@@ -65,11 +62,3 @@ def get_user_profile(user_id: int, db: Session = Depends(get_db)):
         return UserService.get_user_profile(db, user_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
-
-@router.post("/admin/sync", tags=["Admin"])
-async def trigger_sync(x_admin_key: str = Header(None)):
-    if x_admin_key != "fortnite-cosmetics-app":
-        raise HTTPException(status_code=403, detail="Acesso administrativo negado")
-    
-    celery_app.send_task("sync_cosmetics")
-    return {"status": "success", "message": "Tarefa de sincronização enviada."}

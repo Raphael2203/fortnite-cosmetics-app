@@ -1,5 +1,4 @@
 import pytest
-import asyncio
 from app.services import fortnite
 
 @pytest.mark.asyncio

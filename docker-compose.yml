@@ -25,37 +25,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_started
-    volumes:
-      - ./backend:/app
-
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
-
-  celery:
-    build: ./backend
-    command: celery -A app.celery.config:celery_app worker --loglevel=info
-    env_file:
-      - ./backend/.env.local
-    depends_on:
-      backend:
-        condition: service_started
-      redis:
-        condition: service_started
-    volumes:
-      - ./backend:/app
-
-  celery-beat:
-    build: ./backend
-    command: celery -A app.celery.config:celery_app beat --loglevel=info
-    env_file:
-      - ./backend/.env.local
-    depends_on:
-      - celery
-      - redis
     volumes:
       - ./backend:/app
 

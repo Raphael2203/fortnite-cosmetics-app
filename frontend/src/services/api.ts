@@ -3,7 +3,7 @@ const BASE = (import.meta as any).env.VITE_API_URL
 
 const API = axios.create({
   baseURL: BASE,
-  timeout: 5000
+  timeout: 30000
 })
 
 const setToken = (token: string | null) => {
