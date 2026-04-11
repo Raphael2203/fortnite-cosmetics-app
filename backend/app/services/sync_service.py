@@ -8,6 +8,7 @@ from app.core.config import BASE_FORTNITE_URL, FORTNITE_HEADERS
 def fetch_fortnite_data_sync(endpoint: str):
     with httpx.Client(headers=FORTNITE_HEADERS, timeout=60) as client:
         url = f"{BASE_FORTNITE_URL}{endpoint}"
+        print(f"DEBUG: Tentando acessar URL: {url}")
         try:
             response = client.get(url)
 
@@ -87,8 +88,14 @@ def sync_only_shop():
             print("Dados inválidos ou vazios.")
             return
 
-        entries = shop_data.get("data", {}).get("entries", []) 
-        
+        data_obj = shop_data.get("data", {})
+        entries = data_obj.get("entries", [])
+
+        if not entries:
+            featured = data_obj.get("featured", {}).get("entries", []) if data_obj.get("featured") else []
+            daily = data_obj.get("daily", {}).get("entries", []) if data_obj.get("daily") else []
+            entries = featured + daily
+
         if not entries:
             print("Nenhuma entrada encontrada na loja")
             return

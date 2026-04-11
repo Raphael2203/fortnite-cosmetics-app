@@ -27,6 +27,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
+@app.get("/")
+def read_root():
+    return {"status": "ok"}
+
 origins = [
     "http://localhost:4173",
     "http://127.0.0.1:4173",                         
