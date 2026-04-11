@@ -6,7 +6,7 @@ from .service import get_all_cosmetics, get_details
 
 router = APIRouter(tags=["Cosmetics"])
 
-@router.get("/", response_model=CosmeticList)
+@router.get("", response_model=CosmeticList)
 def list_cosmetics(
     page: int = 1,
     size: int = 20,

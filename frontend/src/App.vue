@@ -23,6 +23,21 @@ const loadMe = async () => {
   }
 }
 
+const sellItem = async (cosmeticId: number) => {
+  if (!confirm("Deseja devolver este item? Os V-Bucks serão estornados.")) return
+
+  try {
+    await api.returnCosmetic(cosmeticId)
+    history.value = history.value.filter(h => !(h.type === 'buy' && h.cosmetic?.id === cosmeticId))
+    await loadMe()
+    await loadHistory()
+    
+    alert("Item devolvido com sucesso!")
+  } catch (err: any) {
+    alert("Erro ao devolver item: " + (err.response?.data?.detail ?? err.message))
+  }
+}
+
 const doLogin = async () => {
   authError.value = null
   try {
@@ -70,6 +85,25 @@ const loadHistory = async () => {
   }
 }
 
+const activeTab = ref<'comprados' | 'vendidos'>('comprados')
+import { computed } from 'vue'
+
+const filteredHistory = computed(() => {
+  const returnedIds = history.value
+    .filter(h => h.type === 'return')
+    .map(h => h.cosmetic?.id);
+
+  if (activeTab.value === 'comprados') {
+    return history.value.filter(h => 
+      h.type === 'buy' && 
+      h.cosmetic && 
+      !returnedIds.includes(h.cosmetic.id)
+    );
+  } else {
+    return history.value.filter(h => h.type === 'return');
+  }
+})
+
 onMounted(async () => {
   await loadMe()
 })
@@ -116,28 +150,69 @@ watch(showHistory, (v) => { if (v) loadHistory() })
   </main>
 
   <div v-if="showHistory" style="position:fixed; right:0; top:0; height:100%; width:380px; background:#111; color:#eee; border-left:2px solid #8b31ff; padding:16px; overflow:auto; z-index: 100;">
-    <h3 style="color: #fdf035; font-style: italic; text-transform: uppercase;">Purchase History</h3>
+    <h3 style="color: #fdf035; font-style: italic; text-transform: uppercase; margin-bottom: 20px;">History</h3>
+
+    <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+      <button 
+        @click="activeTab = 'comprados'"
+        :style="{
+          flex: 1, padding: '8px', cursor: 'pointer', border: 'none', borderRadius: '4px',
+          background: activeTab === 'comprados' ? '#8b31ff' : '#333',
+          color: 'white', fontWeight: 'bold'
+        }"
+      >
+        COMPRADOS
+      </button>
+      <button 
+        @click="activeTab = 'vendidos'"
+        :style="{
+          flex: 1, padding: '8px', cursor: 'pointer', border: 'none', borderRadius: '4px',
+          background: activeTab === 'vendidos' ? '#8b31ff' : '#333',
+          color: 'white', fontWeight: 'bold'
+        }"
+      >
+        VENDIDOS
+      </button>
+    </div>
+
     <div v-if="historyLoading">Loading...</div>
+
     <ul v-else style="list-style: none; padding: 0;">
-      <li v-for="h in history" :key="h.id" style="margin-bottom:12px; padding: 12px; background: #1e1e2f; border-radius: 6px; border-left: 4px solid #007bff; display: flex; align-items: center; gap: 12px;">
-        <img v-if="h.cosmetic?.image_url" 
-             :src="h.cosmetic.image_url" 
-             width="50" height="50" 
-             style="border-radius: 4px; background: #2a2a3c; object-fit: cover;" />
+      <li v-for="h in filteredHistory" :key="h.id" 
+          :style="{
+            marginBottom: '12px', padding: '12px', background: '#1e1e2f', borderRadius: '6px', 
+            borderLeft: activeTab === 'comprados' ? '4px solid #007bff' : '4px solid #ff4444',
+            display: 'flex', alignItems: 'center', gap: '12px'
+          }">
+        
+        <img v-if="h.cosmetic?.image_url" :src="h.cosmetic.image_url" width="50" height="50" style="border-radius: 4px; object-fit: cover;" />
+        
         <div style="flex-grow: 1;">
-          <div style="font-weight: bold; color: #007bff; text-transform: uppercase; font-size: 0.7rem;">{{ h.type }}</div>
-          <div v-if="h.cosmetic" style="margin: 2px 0; color: #fff; font-weight: 600; font-size: 0.9rem;">{{ h.cosmetic.name }}</div>
-          <div v-else style="color: #666; font-style: italic; font-size: 0.8rem;">Item info unavailable</div>
-          <div>
+          <div v-if="h.cosmetic" style="color: #fff; font-weight: 600; font-size: 0.9rem;">{{ h.cosmetic.name }}</div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
             <small style="color: #888; font-size: 0.7rem;">{{ new Date(h.created_at).toLocaleDateString('pt-BR') }}</small>
+            
+            <button 
+              v-if="activeTab === 'comprados' && h.cosmetic" 
+              @click="sellItem(h.cosmetic.id)"
+              style="background: #ff4444; color: white; border: none; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 0.6rem; font-weight: bold;"
+            >
+              VENDER
+            </button>
           </div>
         </div>
       </li>
+      
+      <div v-if="filteredHistory.length === 0" style="text-align: center; color: #666; margin-top: 20px;">
+        Nenhum item nesta categoria.
+      </div>
     </ul>
+
     <div style="margin-top: 20px;">
-      <button @click="showHistory = false" style="width: 100%; padding: 10px; cursor: pointer;">Close History</button>
+      <button @click="showHistory = false" style="width: 100%; padding: 10px; cursor: pointer; background: #222; color: #888; border: 1px solid #444;">Close</button>
     </div>
-  </div>
+</div>
 
   <div v-if="showLogin" class="modal-overlay">
     <div class="modal">
