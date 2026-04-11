@@ -81,7 +81,7 @@ def sync_only_shop():
     db = SessionLocal()
     try:
         print("Atualizando apenas os preços da loja...")
-        shop_data = fetch_fortnite_data_sync("/shop/br")
+        shop_data = fetch_fortnite_data_sync("/shop/br/combined")
 
         if not isinstance(shop_data, dict) or "data" not in shop_data:
             print("Dados inválidos ou vazios.")
