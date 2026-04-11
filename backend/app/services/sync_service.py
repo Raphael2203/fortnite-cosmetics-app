@@ -92,11 +92,6 @@ def sync_only_shop():
         entries = data_obj.get("entries", [])
 
         if not entries:
-            featured = data_obj.get("featured", {}).get("entries", []) if data_obj.get("featured") else []
-            daily = data_obj.get("daily", {}).get("entries", []) if data_obj.get("daily") else []
-            entries = featured + daily
-
-        if not entries:
             print("Nenhuma entrada encontrada na loja")
             return
 
@@ -105,7 +100,7 @@ def sync_only_shop():
         count = 0
         for entry in entries:
             price = entry.get("finalPrice", 0)
-            for item in entry.get("items", []):
+            for item in entry.get("brItems", []):
                 api_id = item.get("id")
                 if api_id:
                     db.query(Cosmetic).filter(Cosmetic.api_id == api_id).update({
