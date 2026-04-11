@@ -52,20 +52,26 @@ def sync_cosmetics():
             existing = db.query(Cosmetic).filter_by(api_id=api_id).first()
             rarity_data = item.get("rarity", {})
             rarity_val = rarity_data.get("value", "Common") if isinstance(rarity_data, dict) else "Common"
-            
+            images = item.get("images", {})
+            img_url = None
+            if isinstance(images, dict):
+                img_url = images.get("featured") or images.get("icon") or images.get("smallIcon")
+                
             if existing:
                 existing.name = item.get("name", existing.name)
                 existing.rarity = rarity_val
                 existing.is_new = api_id in new_ids
                 existing.is_on_sale = api_id in shop_ids
+                existing.image_url = img_url
             else:
                 new_cosmetic = Cosmetic(
                     api_id=api_id,
                     name=item.get("name", "Unknown"),
                     rarity=rarity_val,
-                    price=0, 
+                    price=item.get("shopHistory", [{}])[-1].get("price", 0) if item.get("shopHistory") else 0,
                     is_new=api_id in new_ids,
-                    is_on_sale=api_id in shop_ids
+                    is_on_sale=api_id in shop_ids,
+                    image_url=img_url
                 )
                 db.add(new_cosmetic)
 

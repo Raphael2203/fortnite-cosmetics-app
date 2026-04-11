@@ -12,15 +12,14 @@ class PurchaseType(enum.Enum):
 class Purchase(Base):
     __tablename__ = "purchases"
 
-    # use integer primary key and integer foreign keys instead of UUIDs
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
     cosmetic_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("cosmetics.id"), nullable=True)
     bundle_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("bundles.id"), nullable=True)
     
     type: Mapped[PurchaseType] = mapped_column(Enum(PurchaseType))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
 
-    user = relationship("User")
-    cosmetic = relationship("Cosmetic")
+    user = relationship("User", back_populates="purchases")
+    cosmetic: Mapped["Cosmetic"] = relationship("Cosmetic", lazy="selectin")
     bundle = relationship("Bundle")

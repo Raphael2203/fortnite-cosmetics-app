@@ -17,6 +17,7 @@ class User(Base):
     )
     
     purchases: Mapped[list["Purchase"]] = relationship(
+        "Purchase",
         back_populates="user", 
         lazy="selectin"
         )

@@ -1,3 +1,55 @@
-*.env
-*.txt
-*.env.local
+# --- SISTEMA ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- AMBIENTE E SEGURANÇA ---
+.env
+*.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- FRONTEND (Node / Vue / Vite) ---
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vscode/*
+!.vscode/extensions.json
+.vite/
+.npm/
+
+# --- BACKEND (Python / FastAPI) ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+ENV/
+env/
+.env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+db.sqlite3
+.db
+
+# --- DOCKER ---
+.docker/
+# Se quiser ignorar logs do docker, mas manter os arquivos de config:
+*.log

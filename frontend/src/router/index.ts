@@ -5,7 +5,7 @@ import UsersList from '../views/UsersList.vue'
 import UserProfile from '../views/UserProfile.vue'
 
 const routes = [
-  { path: '/', component: CosmeticsList },
+  { path: '/', component: CosmeticsList, props: {defaultFilter : {is_on_sale: true}} },
   { path: '/cosmetics/:id', component: CosmeticDetail, props: true },
   { path: '/users', component: UsersList },
   { path: '/users/:id', component: UserProfile, props: true }

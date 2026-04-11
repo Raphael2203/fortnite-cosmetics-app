@@ -18,7 +18,8 @@ class Cosmetic(Base):
     price: Mapped[int] = mapped_column(Integer, default=0)
     is_new: Mapped[bool] = mapped_column(Boolean, default=False)
     is_on_sale: Mapped[bool] = mapped_column(Boolean, default=False)
-
+    image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    
     bundles: Mapped[list["Bundle"]] = relationship(
         "Bundle",
         secondary=bundle_cosmetic, 
