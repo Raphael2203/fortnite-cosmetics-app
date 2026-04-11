@@ -28,7 +28,7 @@ def sync_cosmetics():
         
         all_data = fetch_fortnite_data_sync("/cosmetics/br")
         new_data = fetch_fortnite_data_sync("/cosmetics/new")
-        shop_data = fetch_fortnite_data_sync("/shop/br/combined")
+        shop_data = fetch_fortnite_data_sync("/shop")
         all_items = all_data.get("data", []) if isinstance(all_data, dict) else []
         
         new_items_list = []
@@ -82,7 +82,7 @@ def sync_only_shop():
     db = SessionLocal()
     try:
         print("Atualizando apenas os preços da loja...")
-        shop_data = fetch_fortnite_data_sync("/shop/br/combined")
+        shop_data = fetch_fortnite_data_sync("/shop")
 
         if not isinstance(shop_data, dict) or "data" not in shop_data:
             print("Dados inválidos ou vazios.")
