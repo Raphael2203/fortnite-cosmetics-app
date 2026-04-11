@@ -1,9 +1,11 @@
+import threading
 from fastapi import FastAPI
-from fastapi.concurrency import asynccontextmanager
+from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.routers import router as api_router
 from app.database.session import SessionLocal
 from app.database.seed import seed_test_user
+from app.services.sync_service import run_initial_sync
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -12,6 +14,10 @@ async def lifespan(app: FastAPI):
         seed_test_user(db)
     finally:
         db.close()
+    
+    sync_thread = threading.Thread(target=run_initial_sync)
+    sync_thread.start()
+
     yield
     
 app = FastAPI(

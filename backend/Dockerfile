@@ -11,5 +11,4 @@ COPY . .
 
 ENV PYTHONPATH=/app
 
-CMD sh -c "alembic upgrade head && python -m app.services.sync_service && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
-    
+CMD sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
