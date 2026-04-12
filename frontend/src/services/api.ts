@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from 'axios'
 const BASE = (import.meta as any).env.VITE_API_URL
 
 const API = axios.create({
@@ -51,5 +51,7 @@ export default {
   syncCosmetics: (adminKey: string) => 
     API.post("/users/admin/sync", {}, {
       headers: { "x-admin-key": adminKey }
-    })
+    }),
+
+  checkHealth: () => API.get('/health'),
 }

@@ -2,24 +2,38 @@
 import { ref, onMounted, watch } from 'vue'
 import api from './services/api'
 
+const isDBReady = ref(false)
+const retryCount = ref(0)
 const currentUser = ref<any>(null)
 const showLogin = ref(false)
 const showRegister = ref(false)
 const showHistory = ref(false)
 const authError = ref<string | null>(null)
-
 const loginForm = ref({ email: '', password: '' })
 const regForm = ref({ email: '', password: '' })
-
 const history = ref<any[]>([])
 const historyLoading = ref(false)
+
+const wakeUpDataBase = async () => {
+  try {
+    await api.checkHealth()
+    isDBReady.value = true
+  } catch(err) {
+    retryCount.value++
+    setTimeout(wakeUpDataBase, 2000)
+  }
+}
 
 const loadMe = async () => {
   try {
     const res = await api.me()
     currentUser.value = res.data
-  } catch (e) {
-    currentUser.value = null
+  } catch (e: any) {
+    if (e.response?.status === 401) {
+    currentUser.value = null;
+    return;
+  }
+  console.error("Erro inesperado ao carregar usuário:", e);
   }
 }
 
@@ -50,6 +64,12 @@ const doLogin = async () => {
   } catch (err: any) {
     authError.value = err.response?.data?.detail ?? err.message
   }
+}
+
+const fillTestAccount = () => {
+  loginForm.value.email = 'admin@admin.com'
+  loginForm.value.password = 'admin123'
+  doLogin()
 }
 
 const doRegister = async () => {
@@ -105,13 +125,30 @@ const filteredHistory = computed(() => {
 })
 
 onMounted(async () => {
-  await loadMe()
+  await wakeUpDataBase();
+  const savedToken = localStorage.getItem("fc_token");
+  if (savedToken) {
+    api.setToken(savedToken);
+    await loadMe()
+  } else {
+    currentUser.value = null;
+    api.setToken(null);
+  }
 })
 
 watch(showHistory, (v) => { if (v) loadHistory() })
 </script>
 
 <template>
+  <div v-if="!isDBReady" class="loading-overlay">
+    <div class="loader-content">
+      <div class="spinner"></div>
+      <h2>Fortnite Cosmetics</h2>
+      <p>Acordando o banco de dados... (Tentativa {{ retryCount }})</p>
+      <span>Isso acontece após períodos de inatividade no Supabase.</span>
+    </div>
+  </div>
+
   <nav style="padding:12px; border-bottom:1px solid #333; display:flex; align-items:center; justify-content:space-between; background: #1a1a1a; color: white;">
     <div style="display: flex; gap: 15px; align-items: center;">
       <router-link to="/" style="text-decoration: none; color: #42b983; font-weight: bold;">Cosmetics</router-link>
@@ -214,18 +251,25 @@ watch(showHistory, (v) => { if (v) loadHistory() })
     </div>
 </div>
 
-  <div v-if="showLogin" class="modal-overlay">
-    <div class="modal">
-      <h3>Login</h3>
-      <input v-model="loginForm.email" placeholder="Email" class="input" />
-      <input v-model="loginForm.password" type="password" placeholder="Password" class="input" />
-      <div class="modal-actions">
-        <button @click="doLogin">Login</button>
-        <button @click="showLogin = false" class="secondary">Close</button>
-      </div>
-      <div v-if="authError" class="error">{{ authError }}</div>
+<div v-if="showLogin" class="modal-overlay">
+  <div class="modal">
+    <h3>Login</h3>
+    <input v-model="loginForm.email" placeholder="Email" class="input" />
+    <input v-model="loginForm.password" type="password" placeholder="Password" class="input" />
+    
+    <div class="modal-actions">
+      <button @click.prevent="doLogin">Login</button>
+      <button @click="showLogin = false" class="secondary">Close</button>
+    </div>
+
+    <div v-if="authError" class="error">{{ authError }}</div>
+
+    <div class="demo-section">
+      <span>Quer testar sem cadastrar?</span>
+      <button @click="fillTestAccount" class="btn-demo">Acesso Rápido</button>
     </div>
   </div>
+</div>
 
   <div v-if="showRegister" class="modal-overlay">
     <div class="modal">
@@ -242,6 +286,22 @@ watch(showHistory, (v) => { if (v) loadHistory() })
 </template>
 
 <style scoped>
+.loading-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: #0a0a0a; color: white;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+}
+.loader-content { text-align: center; }
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left-color: #8b31ff;
+  border-radius: 50%; width: 40px; height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -261,4 +321,33 @@ watch(showHistory, (v) => { if (v) loadHistory() })
 .error { color: #ff4444; margin-top: 10px; font-size: 0.9em; }
 .secondary { background: #444; }
 button { cursor: pointer; }
+
+.demo-section {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.demo-section span {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.btn-demo {
+  background: transparent !important;
+  border: 1px solid #8b31ff !important;
+  color: #8b31ff !important;
+  padding: 8px !important;
+  font-size: 0.9rem !important;
+  width: 100%;
+}
+
+.btn-demo:hover {
+  background: #8b31ff !important;
+  color: white !important;
+}
 </style>

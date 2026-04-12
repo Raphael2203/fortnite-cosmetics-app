@@ -60,7 +60,6 @@ const load = async () => {
   loading.value = true
   try {
     const res = await api.listUsers()
-    // O backend agora retorna o campo vbucks no UserOut
     users.value = res.data || []
   } catch (e) {
     console.error(e)

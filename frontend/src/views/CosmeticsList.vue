@@ -6,10 +6,7 @@
       <input v-model="filters.name" placeholder="Search name" style="padding:10px; width:240px; background: #333; border: 1px solid #444; color: white; border-radius: 4px;" />
       <select v-model="filters.rarity" style="padding:10px; background: #333; border: 1px solid #444; color: white; border-radius: 4px;">
         <option value="">All rarities</option>
-        <option value="legendary">Legendary</option>
-        <option value="epic">Epic</option>
-        <option value="rare">Rare</option>
-        <option value="uncommon">Uncommon</option>
+        <option v-for="rarity in dynamicRarities" :key="rarity" :value="rarity"> {{ rarity }}</option>
       </select>
       <label style="color: #eee; cursor: pointer;"><input type="checkbox" v-model="filters.is_new" /> New 🆕</label>
       <label style="color: #eee; cursor: pointer;"><input type="checkbox" v-model="filters.is_on_sale" /> On Sale 🔥</label>
@@ -65,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import api from '../services/api'
 import { useRouter } from 'vue-router'
 import Pagination from '../components/Pagination.vue'
@@ -83,7 +80,7 @@ const filters = ref({
   name: '',
   rarity: '',
   is_new: false as boolean | null,
-  is_on_sale: false as boolean | null
+  is_on_sale: true
 })
 
 const load = async () => {
@@ -110,8 +107,9 @@ const loadUser = async () => {
     const res = await api.me()
     userVBucks.value = res.data.vbucks
     username.value = res.data.username
-  } catch (e) {
-    console.error("User not logged in or balance error", e)
+  } catch (e: any) {
+    if (e.response?.status === 401) return 
+    console.error("Erro ao carregar saldo:", e)
   }
 }
 
@@ -127,9 +125,19 @@ const buy = async (id: number) => {
   }
 }
 
+const dynamicRarities = computed(() => {
+  const allRarities = cosmetics.value.map(c => c.rarity).filter(Boolean);
+  return [...new Set(allRarities)].sort();
+})
+
 const onPage = (p: number) => { page.value = p; load() }
 const onSearch = () => { page.value = 1; load() }
 
-load()
-loadUser()
+onMounted(() => {
+  load();
+  const token = localStorage.getItem("fc_token");
+  if (token) {
+    loadUser();
+  }
+});
 </script>

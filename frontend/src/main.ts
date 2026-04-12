@@ -1,4 +1,5 @@
-import './style.css' // adiciona estilos globais
+//@ts-ignore
+import './style.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
