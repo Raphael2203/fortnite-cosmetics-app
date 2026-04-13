@@ -83,6 +83,9 @@ const filters = ref({
   is_on_sale: true
 })
 
+const retryCount = ref(0)
+const maxRetries = 5
+
 const load = async () => {
   loading.value = true
   try {
@@ -93,12 +96,24 @@ const load = async () => {
     if (filters.value.is_on_sale) params.is_on_sale = true
 
     const res = await api.listCosmetics(params)
+
     cosmetics.value = res.data?.items ? res.data.items : (res.data || [])
     total.value = res.data?.total ?? cosmetics.value.length
+    retryCount.value = 0
   } catch (e) {
-    console.error(e)
+    console.error("Banco de dados ainda subindo...")
+    if (retryCount.value < maxRetries) {
+      retryCount.value++
+      setTimeout(() => {
+        load()
+      }, 4000)
+    } else {
+      console.error("Maximo de tentativas atingido")
+    }
   } finally {
-    loading.value = false
+    if (cosmetics.value.length > 0 || retryCount.value >= maxRetries) {
+      loading.value = false
+    }
   }
 }
 
