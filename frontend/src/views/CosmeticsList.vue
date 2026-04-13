@@ -13,7 +13,10 @@
       <button @click="onSearch" style="padding: 10px 20px; background: #8b31ff; border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: bold;">Search</button>
     </div>
 
-    <div v-if="loading">
+    <div v-if="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Sincronizando com o servidor...</p>
+      <small v-if="showSlowMessage">O banco de dados está sendo iniciado, aguarde um instante.</small>
       <div v-for="n in 6" :key="n" style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; background: #1a1a1a; padding: 15px; border-radius: 8px;">
         <div style="display: flex; align-items: center; gap: 15px; width: 60%;">
           <div class="skeleton" style="height: 50px; width: 50px; border-radius: 4px;"></div>
@@ -75,6 +78,7 @@ const total = ref(0)
 const router = useRouter()
 const userVBucks = ref(0)
 const username = ref('')
+const showSlowMessage = ref(false)
 
 const filters = ref({
   name: '',
@@ -83,40 +87,32 @@ const filters = ref({
   is_on_sale: true
 })
 
-const retryCount = ref(0)
-const maxRetries = 5
-
 const load = async () => {
   loading.value = true
+  showSlowMessage.value = false
+
+  const slowTimer = setTimeout(() => {
+    if (loading.value) showSlowMessage.value = true
+  }, 4000)
+
   try {
     const params: any = { page: page.value, size: perPage.value }
     if (filters.value.name) params.name = filters.value.name
     if (filters.value.rarity) params.rarity = filters.value.rarity
     if (filters.value.is_new) params.is_new = true
     if (filters.value.is_on_sale) params.is_on_sale = true
-
     const res = await api.listCosmetics(params)
 
     cosmetics.value = res.data?.items ? res.data.items : (res.data || [])
     total.value = res.data?.total ?? cosmetics.value.length
-    retryCount.value = 0
+    
   } catch (e) {
-    console.error("Banco de dados ainda subindo...")
-    if (retryCount.value < maxRetries) {
-      retryCount.value++
-      setTimeout(() => {
-        load()
-      }, 4000)
-    } else {
-      console.error("Maximo de tentativas atingido")
-    }
+    console.error("Erro definitivo após retries:", e)
   } finally {
-    if (cosmetics.value.length > 0 || retryCount.value >= maxRetries) {
-      loading.value = false
-    }
+    clearTimeout(slowTimer)
+    loading.value = false
   }
 }
-
 const loadUser = async () => {
   try {
     const res = await api.me()

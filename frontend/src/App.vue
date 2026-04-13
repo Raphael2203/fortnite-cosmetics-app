@@ -140,14 +140,6 @@ watch(showHistory, (v) => { if (v) loadHistory() })
 </script>
 
 <template>
-  <div v-if="!isDBReady" class="loading-overlay">
-    <div class="loader-content">
-      <div class="spinner"></div>
-      <h2>Fortnite Cosmetics</h2>
-      <p>Acordando o banco de dados... (Tentativa {{ retryCount }})</p>
-      <span>Isso acontece após períodos de inatividade no Supabase.</span>
-    </div>
-  </div>
 
   <nav style="padding:12px; border-bottom:1px solid #333; display:flex; align-items:center; justify-content:space-between; background: #1a1a1a; color: white;">
     <div style="display: flex; gap: 15px; align-items: center;">

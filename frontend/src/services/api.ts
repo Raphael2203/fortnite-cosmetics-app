@@ -6,6 +6,28 @@ const API = axios.create({
   timeout: 30000
 })
 
+// Interceptor para lidar com banco em off
+API.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const { config } = error
+    if (!config || config.__retryCount >= 5) {
+      return Promise.reject(error)
+    }
+    config.__retryCount = config.__retryCount || 0
+    config.__retryCount += 1
+    const shouldRetry = !error.response || error.response.status >= 500
+
+    if (shouldRetry) {
+      console.warn(`Tentativa ${config.__retryCount}: Banco dormindo, tentando novamente...`)
+      await new Promise(resolve => setTimeout(resolve, 4000))
+      return API(config)
+    }
+
+    return Promise.reject(error)
+  }
+)
+
 const setToken = (token: string | null) => {
   if (token) {
     API.defaults.headers.common["Authorization"] = `Bearer ${token}`
